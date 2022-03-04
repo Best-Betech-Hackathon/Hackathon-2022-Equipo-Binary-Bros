@@ -1,5 +1,5 @@
 # Hackathon-2022-Equipo-Binary-Bros
-¡Saludos! Somos el sargento Rodrigo y el sargento Bayron, comandantes de la gran armada conocida como la Rebelión, estamos encantados de contar con vosotros Binary Bros.
+¡Saludos! Somos el sargento Rodrigo y el sargento Bayron, comandantes de la gran armada conocida como la Rebelión, estamos encantados de contar los autenticos Binary Bros. Solo un amante de los ceros y unos sabe aprovechar de verdad su potencial.
 
 **En este repositorio podréis ir subiendo vuestro progreso.**
 
