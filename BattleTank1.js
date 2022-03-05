@@ -87,7 +87,6 @@ tank.init(function(settings, info) {
 });
 
 tank.loop(function(state, control) {
-
   detectAndDodge(state,control);
   shootEnemy(state, control);
 });
