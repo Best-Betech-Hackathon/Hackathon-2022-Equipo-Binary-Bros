@@ -1,11 +1,6 @@
 importScripts('lib/tank.js');
+//BattleTank 1
 
-// timer of tank turns. Whenever the tank hits a wall, the timer
-// will be set to a positive integer. Within each simulation step
-// the timer will be decreased by one eventually hitting zero.
-// The tank will keep turning as long as turnTime is above zero.
-// In that way, turning will be sustained for several steps of
-// the simulation
 var turnTime;
 
 // SHOOT ENEMY ---------------------------------------------------------------------------------
@@ -38,12 +33,13 @@ function shootEnemy(state, control) {
 
 // SCAN ENEMY ---------------------------------------------------------------------------------
 function scanEnemy(state, control) {
-  if(!state.radar.enemy) {
+  let enemy = state.radar.enemy;
+  if(!enemy) {
     // scan around for the enemy
     control.RADAR_TURN = 1;
   } else {
     //keep the enemy in the middle of radar beam
-    let targetAngle = Math.deg.atan2(state.radar.enemy.y - state.y, state.radar.enemy.x - state.x);
+    let targetAngle = Math.deg.atan2(enemy.y - state.y, enemy.x - state.x);
     let radarAngle = Math.deg.normalize(targetAngle - state.angle);
     let angleDiff = Math.deg.normalize(radarAngle - state.radar.angle);
     control.RADAR_TURN = angleDiff;
@@ -52,21 +48,22 @@ function scanEnemy(state, control) {
 
 // FOLLOW ENEMY ---------------------------------------------------------------------------------
 function followEnemy(state, control) {
-  if(!state.radar.enemy) {
+  let enemy = state.radar.enemy;
+  if(!enemy) {
     return;
   }
 
-  let targetAngle = Math.deg.atan2(state.radar.enemy.y - state.y, state.radar.enemy.x - state.x);
+  let targetAngle = Math.deg.atan2(enemy.y - state.y, enemy.x - state.x);
   let bodyAngleDiff = Math.deg.normalize(targetAngle - state.angle);
   control.TURN = 0.5 * bodyAngleDiff;
 
-  let targetDistance = Math.distance(state.x, state.y, state.radar.enemy.x, state.radar.enemy.y);
+  let targetDistance = Math.distance(state.x, state.y, enemy.x, enemy.y);
   let distanceDiff = targetDistance - 150;
   control.THROTTLE = distanceDiff/100;
 }
 
 // EXPLORE THE BATTLEFIELD ---------------------------------------------------------------------------------
-function exploreBattlefiield(state, control) {
+function exploreBattlefield(state, control) {
   if(state.radar.enemy) {
     control.THROTTLE = 0;
     return;
@@ -78,7 +75,7 @@ function exploreBattlefiield(state, control) {
     control.THROTTLE = 1;
   }
 
-  if(state.collisions.wall) {
+  if(state.collisions.wall ) {
     // start turning when hitting a wall
     turnTime = 10;
   }
@@ -87,20 +84,45 @@ function exploreBattlefiield(state, control) {
   // reduce the timer with each step of the simulation
   if(turnTime > 0) {
     control.TURN = 1;
+    //TODO: turn the radar
     turnTime--;
   } else {
     control.TURN = 0;
   }
 }
+
+// DETECT AND DOTGE THE BULLETS
+function detectAndDodge (state, control){
+  let enemy = state.radar.enemy;
+  if(!enemy) {
+    // scan around for the enemy
+    control.RADAR_TURN = 1;
+  } else {
+    //keep the enemy in the middle of radar beam
+    let targetAngle = Math.deg.atan2(enemy.y - state.y, enemy.x - state.x);
+    let radarAngle = Math.deg.normalize(targetAngle - state.angle);
+    let angleDiff = Math.deg.normalize(radarAngle - state.radar.angle);
+    control.RADAR_TURN = angleDiff;
+
+    // poner en perpendicular
+    const perpendicular = 90;
+    const angleToMove = Math.deg.normalize(perpendicular - state.angle)
+    const velGiro = 0.1;
+    control.TURN = velGiro * angleToMove
+  }
+  
+}
+
 // -------------------------------------------------------------------------------------------
 tank.init(function(settings, info) {
-  // do not turn at the beginning
-turnTime = 0;
+  settings.SKIN = 'desert';
+  turnTime = 0;
 });
 
 tank.loop(function(state, control) {
   shootEnemy(state, control);
   scanEnemy(state, control);
   followEnemy(state, control);
-  exploreBattlefiield(state, control);
+  exploreBattlefield(state, control);
+  detectAndDodge(state,control);
 });
