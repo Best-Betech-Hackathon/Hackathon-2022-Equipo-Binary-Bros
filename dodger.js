@@ -9,14 +9,14 @@ var avoidDirection;
 
 // initialize your tank
 tank.init(function(settings, info) {
-  settings.SKIN = 'forest';
+  settings.SKIN = 'desert';
   bulletMap = [];
   changeAvoidDirection();
 });
 
 // randomly change direction of movement
 function changeAvoidDirection() {
-  avoidDirection = Math.random() > 0.5 ? -1 : 1; 
+  avoidDirection = Math.random() > 0.5 ? -1 : 1;
 }
 
 tank.loop(function(state, control) {
